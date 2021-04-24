@@ -48,15 +48,15 @@
 .nav-bond {
     position: absolute;
     bottom: 5px;
-    left: 150px;
+    left: 10px;
     width: 35px;
   }
 
   /* The styles for the alien gif */
 .mp {
     position: relative;
-    height: 850px;
-    padding: 20px;
+    height: 650px;
+    padding: 10px; 
     margin: 0%;
     background: black url("../images/money_penny.gif");
     background-attachment: fixed;
