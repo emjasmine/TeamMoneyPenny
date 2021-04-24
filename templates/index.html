@@ -20,50 +20,113 @@
 <body>
 
     <div class="wrapper">
-        <nav class="navbar navbar-dark" style="background-color: #3b3b3b;">
+      <!-- Navigation Bar -->
+        <nav class="navbar navbar-dark" style="background-color: black;">
             <div class="container-fluid">
                 <a class="navbar-brand" href="index.html">
                     <img class="nav-bond" src="https://img.icons8.com/nolan/64/james-bond.png" href="index.html"/>
                 </a>
-                <button type="button" id="calculator" class="btn btn-secondary" href="../Calculator/index.html">Calculator</button>
+                <button type="button" id="calculator" class="btn btn-secondary">
+                    <a href="../Calculator/index.html">Calculator</a> 
+                </button>
             </div>
         </nav>
 
-        <!--Div for the gif of Miss Money Penny-->
-        <div class="mp text-center">
-          <h1 class="mp_text">One Penny At A Time</h1>
-          <p class="mp_text_2">Let's Grow Your Wealth</p>
+        <!--Div for banner -->
+        <div class="banner">
+          <div class="mp text-center">
+              <p class="mp-text">Scroll</p>
+          </div>
         </div>
 
-        <!-- Div for stocks table -->
-        <div>
-            <table class="stock-table">
-                <thead class="stock-table-head">
-                    <!-- table headers td in js-->
-                    <tr>
-                        <th>Qty</th>
-                        <th>Ticker</th>
-                        <th>Company Name</th>
-                        <th>Price</th>
-                        <th>Dividend</th>
-                        <th>Rate of Return</th>
-                    </tr>
-                </thead>
-                <tbody class="stock-table-body">
-                    <!-- table row/col in js -->
-                </tbody>
-            </table>
+        <!-- Container for the site information section -->
+        <div class="container">
+            <div class="row">
+              <!-- Div for Summary Box -->
+              <div class="col-md-8">
+                <div class="summary">
+                  <!-- Summary Box Heading -->
+                  <div class="summary-heading">
+                      <h1 class="sh-text">One Penny At A Time</h1>
+                      <p class="sh-text1">Let's Grow Your Wealth</p>
+                  </div>
+                  <!--Site Info-->
+                  <div>
+                    <p>
+                      They say when you come across a penny on the ground showing heads up it's a lucky penny, and you should
+                      pick it up; however, if it's tails up, it's unlucky, and you should just leave it on the ground. We're
+                      here to turn that unlucky penny over to bring the luck to you and grow your wealth.
+                    </p>
+                    <p>
+                      To do so, we've built a tool to help you explore stock information for those found in the Russell 1000 Index. Russell describes the index as:
+                    </p>
+                    <p class="summary-text2">
+                      The Russell 1000® Index measures the performance of the large-cap segment of the US equity universe. It is a subset of the Russell 3000® Index and includes approximately 1,000 of the largest securities based on a combination of their market cap and current index membership. The Russell 1000® represents approximately 92% of the US market. The Russell 1000® Index is constructed to provide a comprehensive and unbiased barometer for the large-cap segment and is completely reconstituted annually to ensure new and growing equities are included.
+                    </p>
+                    <p>
+                      Go to our calculator tool to explore which stock to purchase based on how much you want to spend. 
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <!-- Div for Meet the Creators-->
+              <div class="col-md-4">
+                <div class="creators">
+                  <h3 class="creator-title">Our MI6 Team</h3>
+                  <hr>
+                  <p class="agent-name">M</p>
+                  <p class="part">Our master of JavaScript.</p>
+                  <p class="part">Part played by: Emerald</p>
+                  <p class="agent-name">Bond</p>
+                  <p class="part">The undercover Python agent.</p>
+                  <p class="part">Part played by: Pramod</p>
+                  <p class="agent-name">Miss Money Penny</p>
+                  <p class="part">The HTML and CSS admin.</p>
+                  <p class="part">Part played by: Jasmine</p>
+
+                </div>
+
+              </div>
+            </div>
         </div>
 
+        <!--Div for Bubble Graph and  Circular Bar Graph-->
+        <div class="graph">
+          <div class="container">
+            <div class="row">
+              <!-- Circular Bar Graph -->
+              <div class="col-md-8">
+                <div id="circular-bar">
+                  <p>insert graph here</p>
+
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div id="bubble-graph">
+                  <p>insert graph here</p>
+
+                </div>
+              </div>
+            </div>
+            
+          </div>
+
+        </div>
+        <!-- Div for the Footer -->
         <footer class="footer">
           <span class="bottom">
-             <!--reference source for the James Bond icon, must insert for free use of icon-->
-            <a href="https://icons8.com/icon/69460/james-bond">James Bond icon by Icons8</a>
+            <h2>Sources:</h2>
+            <ul class="source-list">
+              <li><a class="footer-text" href="https://polygon.io">polygon.io</a></li>
+              <!--reference source for the James Bond icon, must insert for free use of icon-->
+              <li><a class="footer-text" href="https://icons8.com/icon/69460/james-bond">James Bond icon by Icons8</a></li>
+            </ul>
+             
           </span>
         </footer>
       
     </div>
-    <!-- <script src="../static/js/sampledata.json"></script> -->
+     <script src="../static/js/sampledata.json"></script>
     <script src="../static/js/app.js"></script>
 </body>
 </html>
