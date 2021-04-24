@@ -1,11 +1,12 @@
 /***************** Fetch data from JSON file *******************/
 //json path
-const path = "../data/sampledata.json"
+const path = "sampledata.json"
 
 // quandl & polygon combo json
-d3.json(path).then(function(data) {
+d3.json("sampledata.json").then(function(data) 
+{
     console.log(data);
-  });
+});
 
 /***************** On page load ********************************/
 //Create ALL stocks table
