@@ -21,7 +21,7 @@
 
     <div class="wrapper">
         <!-- Navigation Bar -->
-        <nav class="navbar navbar-dark" style="background-color:black;">
+        <nav class="navbar fixed-top navbar-dark" style="background-color:black;">
             <div class="container-fluid">
                 <!-- Icon image links back to main page -->
                 <a class="navbar-brand" href="index.html">
@@ -34,17 +34,19 @@
 
         <!-- Input, Buttons and Gauge-->
         <div class="container" style="padding-top: 20px;">
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="spend-amount">I want to spend: $</label>
-                    <input type="number" id="spend-amount" name="spend-amount" min="0.00" max="1000000.00" value="0.00" step=".50"  onchange="dollarsNotInt(this)">
-                    <div class="buttons">
-                        <button type="button" id="get-stocks" name="get-stocks" class="get-button">Get Stocks</button>
-                        <button type="button" id="reset" name="reset" class="reset-button">Reset Table</button>
+            <div class="input-area">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="spend-amount">I want to spend: $</label>
+                        <input type="number" id="spend-amount" name="spend-amount" min="0.00" max="1000000.00" value="0.00" step=".50"  onchange="dollarsNotInt(this)">
+                        <div class="buttons">
+                            <button type="button" id="get-stocks" name="get-stocks" class="get-button">Get Stocks</button>
+                            <button type="button" id="reset" name="reset" class="reset-button">Reset Table</button>
+                        </div>
                     </div>
-                </div>
-                 <!-- Div for guage -->
-                <div class="col-md-4" id="gauge">
+                     <!-- Div for guage -->
+                    <div class="col-md-4" id="gauge">
+                    </div>
                 </div>
             </div>
         </div>
