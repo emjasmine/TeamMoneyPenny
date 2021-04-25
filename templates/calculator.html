@@ -23,10 +23,12 @@
         <!-- Navigation Bar -->
         <nav class="navbar navbar-dark" style="background-color:black;">
             <div class="container-fluid">
-                <a class="navbar-brand" href="../templates/index.html">
-                    <img class="nav-bond" src="https://img.icons8.com/nolan/64/james-bond.png" href="../templates/index.html"/>
+                <!-- Icon image links back to main page -->
+                <a class="navbar-brand" href="index.html">
+                    <img class="nav-bond" src="https://img.icons8.com/nolan/64/james-bond.png" href="index.html"/>
                 </a>
-                <button type="button" id="calculator" class="btn-main" href="../Calculator/index.html">Calculator</button>
+                <!-- Button links to the calculator page -->
+                <button type="button" id="calculator" class="btn-main" href="calculator.html">Calculator</button>
             </div>
         </nav>
 
@@ -78,18 +80,26 @@
         
         <!-- Div for the Footer -->
         <footer class="footer">
-            <span class="bottom">
-              <h2>Sources:</h2>
-              <ul class="source-list">
-                <!-- data source for our stock data -->
-                <li><a class="footer-text" href="https://polygon.io">polygon.io</a></li>
-                <!--reference source for the James Bond icon, must insert for free use of icon-->
-                <li><a class="footer-text" href="https://icons8.com/icon/69460/james-bond">James Bond icon by Icons8</a></li>
-                 <!-- source for our Russell 1000  -->
-                <li><a class="footer-text" href="https://research.ftserussell.com/Analytics/FactSheets/temp/3f3741fa-5be6-45d9-83d3-e02cd5d7331a.pdf">Russell 1000</a></li>
-              </ul>
-               
-            </span>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6" style="padding: 20px;">
+                        <span class="bottom">
+                            <h2>Sources:</h2>
+                            <ul class="source-list">
+                                <!-- data source for our stock data -->
+                                <li><a class="footer-text" href="https://polygon.io">polygon.io</a></li>
+                                <!--reference source for the James Bond icon, must insert for free use of icon-->
+                                <li><a class="footer-text" href="https://icons8.com/icon/69460/james-bond">James Bond icon by Icons8</a></li>
+                                <!-- source for our Russell 1000  -->
+                                <li><a class="footer-text" href="https://research.ftserussell.com/Analytics/FactSheets/temp/3f3741fa-5be6-45d9-83d3-e02cd5d7331a.pdf">Russell 1000</a></li>
+                            </ul>
+                        </span>
+                    </div>
+                    <div class="col-md-6" style="text-align: right; color: white; padding-top: 20px;">
+                        <p>Data refreshes every 8 hours</p>
+                    </div>
+                </div>
+            </div>
           </footer>
     </div>
     <!-- <script src="app.js"></script> -->
