@@ -22,7 +22,7 @@
     min-height: 100%;
     padding-bottom: 130px;
     overflow: auto;
-    background-color: #070505;
+    /* background-color: #070505; */
 }
 
 /* The footer is positioned at the bottom of the page */
@@ -32,7 +32,7 @@
     bottom: 0;
     left: 0;
     min-height: 100px;
-    background: #080a9c;
+    background: #2355a7;
   }
 /* style code for footer text */
   .footer-text {
@@ -61,8 +61,16 @@
     position: absolute;
     bottom: 5px;
     left: 10px;
-    width: 65px;
+    width: 60px;
   }
+/* Style for the Calculator Button */
+.btn-main{
+    background-color: #aa16cf;
+}
+
+.btn-main a{
+    color: black;
+}
 
 /* The styles for the MoneyPenny gif */
 .mp {
@@ -97,14 +105,13 @@
 /* Styles text for summary*/
   .summary {
     margin-top: 5%;
-    padding: 30px; 
+    padding: 10px; 
     color: #f5f5f1;
   }
 
   .summary-text1 {
     margin-left: 30px;
     margin-right: 40px;
-    /* padding: 65px;  */
     color: #f5f5f1;
   }
 
@@ -112,7 +119,9 @@
   .creators {
     margin-top: 10%;
     padding: 30px; 
-    color: #f5f5f1;
+    color:black;
+    text-align: center;
+    background-color: lightgray;
   }
 
   .agent-name{
@@ -124,6 +133,22 @@
   .part{
     text-align: center;
     font-size: small;
-    color: whitesmoke;
-
+    color: black;
 }
+
+/* Formating specific to the Calculator Page */
+    /* styling for the Get Stock and Reset Buttons */
+
+    .buttons{
+        padding: 20px;
+    }
+
+    .get-button{
+        background-color: #2355a7;
+        color: white;
+    }
+
+    .reset-button{
+        background-color: #2355a7;
+        color: white;
+    }

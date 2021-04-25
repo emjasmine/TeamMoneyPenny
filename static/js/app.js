@@ -94,9 +94,14 @@ Plotly.newPlot('bar-chart', data);
 /************************* Gauge *************************/
 function gauge(remaining_amount, spend_amount, dollar_min)
 {
-    // check values 
-    // console.log(`Remaining Amount ${remaining_amount}`)
-    // console.log(`Spend Amount ${spend_amount}`)
+    // check for zero dollar spend amount so that gauge doesnt error
+    // if (parseInt(d3.select('#spend-amount').property('value')) === 0.00) 
+    // {
+    //     spend_amount = 50
+    // } 
+    // check values
+    console.log(`Remaining Amount ${remaining_amount}`)
+    console.log(`Spend Amount ${spend_amount}`)
 
     var data = 
     [{
@@ -112,8 +117,8 @@ function gauge(remaining_amount, spend_amount, dollar_min)
     }];
     var layout = 
     {
-        width: 600, 
-        height: 500, 
+        width: 300, 
+        height: 225, 
         margin: 
         { 
             t: dollar_min, 
