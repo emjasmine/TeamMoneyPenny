@@ -31,9 +31,10 @@ spydata.then(function (data)
     allStocksTable(data) 
     barChart(X_tkrsymb, Y_divtimesqty)
     gauge(remaining_amount, spend_amount, dollar_min)
-}); // end .then statement
+});
+
 /****************************************************************
-                        User Input
+                        User Interactions
 ****************************************************************/
 
 // Identify user input field
@@ -43,6 +44,10 @@ var dollars_input = d3.select('#spend-amount');
 var getStocks_button = d3.select('#get-stocks')
 
 getStocks_button.on('click', getStocks_event)
+
+var qtyInput_row = d3.selectAll('.tkr_row')
+
+// qtyInput_row.on('input', qtyInput_event(remaining_amount))
 
 /****************************************************************
                         FUNCTIONS
@@ -93,15 +98,8 @@ Plotly.newPlot('bar-chart', data);
 /************************* Gauge *************************/
 function gauge(remaining_amount, spend_amount, dollar_min)
 {
-    // check for zero dollar spend amount so that gauge doesnt error
-    // if (parseInt(d3.select('#spend-amount').property('value')) === 0.00) 
-    // {
-    //     spend_amount = 50
-    // } 
-    // check values
-    console.log(`Remaining Amount ${remaining_amount}`)
-    console.log(`Spend Amount ${spend_amount}`)
-
+    // console.log(`Remaining Amount ${remaining_amount}`)
+    // console.log(`Spend Amount ${spend_amount}`)
     var data = 
     [{
         value: remaining_amount,
@@ -116,15 +114,9 @@ function gauge(remaining_amount, spend_amount, dollar_min)
     }];
     var layout = 
     {
-        width: 300, 
-        height: 225, 
-        margin: 
-        { 
-            t: dollar_min, 
-            b: spend_amount 
-        } 
+        width: 400, 
+        height: 300, 
     };
-
     //Add gauge to empty div
     Plotly.newPlot('gauge', data, layout);
 }
@@ -163,28 +155,15 @@ function checkSpendAmount(input)
 }
 
 /************************* Filter Table *************************/
-function filterTable(data,remaining_amount) 
+function filterTable(data, remaining_amount) 
 {
     // refrence the table body to build table in 
     var tbody = d3.select('.stock-table-body');
-    var spydata = d3.json(path)
     
     var filteredData = data[0].datatable.data;
-    console.log(filteredData)
 
-    // run multiple if statements to check if field is blank or not
-
-    // if the field is blank then do nothing
-    if (remaining_amount === 0 || remaining_amount === undefined ) 
-        {
-            console.log("enter tool tip here")
-        }
-    // if the field is not blank filter table based on remaining amount
-    else 
-    {
-        filteredData = filteredData.filter(stock => stock[3] <= remaining_amount)
-        console.log(filteredData)
-
+    filteredData = filteredData.filter(stock => stock[3] <= remaining_amount)
+    console.log(`filterTable function Resuts: ${filteredData}`)
     // Return an error msg if filter function returns no tickers price less than or equal to remaining amount
     if (filteredData.length === 0 )
     {
@@ -203,45 +182,81 @@ function filterTable(data,remaining_amount)
         filteredData.forEach(stock => 
         {
             //Append a tr to the table body tag
-            var row = tbody.append('tr').html('<input type="number" id="stock-qty" name="stock-qty" min="0" max="1000000" value="0" step="1">');
+            var row = tbody.append('tr').classed('tkr_row', true);
             // qty col now contains an input area
-            row.append("td").text('');
+            row.append("td").html('<input type="number" class="stockQty" name="stockQty" min="0" max="1000000" value="0" step="1" onchange="qtyInput_event(this)">');
             // tkr symbol col
-            row.append("td").text(stock[1]);
+            row.append("td").text(stock[1]).classed('tkrSymbol', true);
             // company name
-            row.append("td").text(stock[0]);
+            row.append("td").text(stock[0]).classed('coName', true);
             // stock price
-            row.append("td").text(stock[3]);
+            row.append("td").text(stock[3]).classed('price', true);
             // dividend rate
-            row.append("td").text(stock[2]);
+            row.append("td").text(stock[2]).classed('divRate', true);
             // rate of return
-            row.append("td").text(stock[4]);
+            row.append("td").text(stock[4]).classed('returnRate', true);
         });
     } 
-    }
-
 }// end entire function
 
 /************************* getStocks_event *************************/
 function getStocks_event() 
 {
-    console.log("button click")
+    console.log("get stock button click")
 
     // redefine spend_amount on user input
     var spend_amount = parseFloat(dollars_input.property('value')).toFixed(2);
-    console.log(spend_amount)
+    console.log(`getStocks_event spend_amount: ${spend_amount}`)
 
-    // set remaining amount to spend amount for full gauge & inital filter value
-    var remaining_amount = spend_amount;
-    console.log(remaining_amount)
-
-    // Call table filter function
-    spydata.then(function (data) 
+    // if the spend_amount is blank or zero then do nothing
+    if (spend_amount === '0.00' || spend_amount === undefined || spend_amount === '0') 
+        {
+            console.log("no spend amount error or tool tip here")
+        }
+    // if the field is not blank filter table based on remaining amount
+    else 
     {
-        //Create filtered stocks table
-        filterTable(data, remaining_amount);
-        // Call gauge function
-        gauge(remaining_amount, spend_amount, dollar_min);
-    });
+        // set remaining amount to spend amount for full gauge & inital filter value
+        var remaining_amount = Math.round(parseFloat(spend_amount),2);
+        console.log(`getStocks_event remaining_amount: ${remaining_amount}`)
+
+        // Call table filter function
+        spydata.then(function (data) 
+        {
+            //Create filtered stocks table
+            filterTable(data, remaining_amount);
+            // Call gauge function
+            gauge(remaining_amount, spend_amount, dollar_min);
+        });
+
+        return remaining_amount
+    }
 }
 
+/************************* qtyInput_event *************************/
+function qtyInput_event() 
+{
+    console.log(`Remaining Amount starts at: ${remaining_amount}`)
+    // grab row values only on the row that was changed
+    var stockQty = this.d3.select('.stockQty').property('value')
+    console.log(`stockQty was entered: ${stockQty}`)
+    var price = this.d3.select('.price').property('value')
+    var div_rate = this.d3.select('.divRate').property('value')
+    var tkr_symb = this.d3.select('.tkrSymbol').property('value')
+    var return_rate = this.d3.select('.returnRate').property('value')
+
+    // REdefine variable remaining_amount == remaining_amount - (Qty_entered * price) 
+    // var remaining_amount = remaining_amount-(parseInt(stockQty)*parseInt(price))
+
+    // console.log(`remaining_amount - (Price * Qty) = ${remaining_amount}`)
+    // var revenue = Qty_entered * div_rate
+    X_tkrsymb.push(tkr_symb)
+    console.log(`Titker symbol: ${tkr_symb}`)
+    Y_divtimesqty.push(price)
+    console.log(`Return rate: ${price}`)
+    // Call Filter Table function to filter table based on new remaining amount
+    // Call Gauge function to move gauge down according to new remaining amount
+    // Call barchart function to add the x & y values according to new lists
+    barChart(X_tkrsymb, Y_divtimesqty)
+    
+}
