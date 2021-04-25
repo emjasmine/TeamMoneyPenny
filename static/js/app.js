@@ -31,8 +31,7 @@ spydata.then(function (data)
     allStocksTable(data) 
     barChart(X_tkrsymb, Y_divtimesqty)
     gauge(remaining_amount, spend_amount, dollar_min)
-});
-
+}); // end .then statement
 /****************************************************************
                         User Input
 ****************************************************************/
@@ -155,6 +154,7 @@ function checkSpendAmount(input)
     //   if (input === 0.00) 
     //   {
     //     input = 50.00
+    // error msg
     //   } 
     //   else 
     //   {
@@ -163,57 +163,64 @@ function checkSpendAmount(input)
 }
 
 /************************* Filter Table *************************/
-function filterTable(data) 
+function filterTable(data,remaining_amount) 
 {
     // refrence the table body to build table in 
     var tbody = d3.select('.stock-table-body');
-
-    // filter table based on remaining amount
-    data[0].datatable.data[0];
+    var spydata = d3.json(path)
+    
+    var filteredData = data[0].datatable.data;
     console.log(filteredData)
-    // // Use for each to create a table with ALL the data
-    // data[0].datatable.data.forEach(stock => 
-    // {
-    //     //Append a tr to the table body tag
-    //     var row = tbody.append('tr');
-    //     // Append td.text  for each info column
-    //     // qty col does not currently contain input
-    //     row.append("td").text('');
-    //     // tkr symbol col
-    //     row.append("td").text(stock[1]);
-    //     // company name
-    //     row.append("td").text(stock[0]);
-    //     // stock price
-    //     row.append("td").text(stock[3]);
-    //     // dividend rate
-    //     row.append("td").text(stock[2]);
-    //     // rate of return
-    //     row.append("td").text(stock[4]);
-    // });
 
-    //     // Return an error msg if filter function returns no tickers price less than or equal to remaining amount
-    //     if (filteredData.length === 0 ){
-    //     // define the table header inorder to clear it
-    //     var thead = d3.select('thead');
-    //     // clear entire table
-    //     tbody.text('');
-    //     // create one row for error msg
-    //     var row = tbody.append('tr');
-    //     // append stats to the list
-    //     row.append(‘td’).attr("colspan", “6”).text('You're out of money!');}
-    //     Else
-    //     // clear table of any previous data
-    //     tbody.html("");
-    //     //create a table with matched data the data	
-    //     tableData.forEach(ticker => { 
-    //     // append a row for each ticker	
-    //     var row = tbody.append('tr').attr(“class”, “tkr_row”);
-    //      // append columns	  		
-    //     row.append("td").append(‘input’).attr(‘placeholder’, ‘Enter Qty’).classed(“input_col”); 
-    //     row.append(“td”).classed(“tkr”).text(“ticker.ticker_name”)
-    //     row.append(“td”).classed(“price”).text(“ticker.price”)
-    //     row.append("td").text(ticker.other_info); }); //end for each    
-}
+    // run multiple if statements to check if field is blank or not
+
+    // if the field is blank then do nothing
+    if (remaining_amount === 0 || remaining_amount === undefined ) 
+        {
+            console.log("enter tool tip here")
+        }
+    // if the field is not blank filter table based on remaining amount
+    else 
+    {
+        filteredData = filteredData.filter(stock => stock[3] <= remaining_amount)
+        console.log(filteredData)
+
+    // Return an error msg if filter function returns no tickers price less than or equal to remaining amount
+    if (filteredData.length === 0 )
+    {
+        // clear all data rows
+        tbody.html('');
+        // create one row for error msg
+        var row = tbody.append('tr');
+        // append error msg
+        row.append('td').attr("colspan", "6").text("I can see you're a penny pincher, but thats not enough money. Enter a larger amount to spend");
+    }
+    else
+    {
+        // clear all data rows
+        tbody.html('');
+        // Use for each to create a table with ALL the data
+        filteredData.forEach(stock => 
+        {
+            //Append a tr to the table body tag
+            var row = tbody.append('tr').html('<input type="number" id="stock-qty" name="stock-qty" min="0" max="1000000" value="0" step="1">');
+            // qty col now contains an input area
+            row.append("td").text('');
+            // tkr symbol col
+            row.append("td").text(stock[1]);
+            // company name
+            row.append("td").text(stock[0]);
+            // stock price
+            row.append("td").text(stock[3]);
+            // dividend rate
+            row.append("td").text(stock[2]);
+            // rate of return
+            row.append("td").text(stock[4]);
+        });
+    } 
+    }
+
+}// end entire function
 
 /************************* getStocks_event *************************/
 function getStocks_event() 
@@ -228,9 +235,13 @@ function getStocks_event()
     var remaining_amount = spend_amount;
     console.log(remaining_amount)
 
-    // Call gauge function
-    gauge(remaining_amount, spend_amount, dollar_min)
-
     // Call table filter function
-    filterTable(spydata)
+    spydata.then(function (data) 
+    {
+        //Create filtered stocks table
+        filterTable(data, remaining_amount);
+        // Call gauge function
+        gauge(remaining_amount, spend_amount, dollar_min);
+    });
 }
+
