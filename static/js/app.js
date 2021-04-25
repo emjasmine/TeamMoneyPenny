@@ -126,14 +126,18 @@ function gauge(remaining_amount, spend_amount, dollar_min)
 }
 
 /************************* Set input field always has 2 decimals *************************/
-function dollarsNotInt(event) {
+function dollarsNotInt(event) 
+{
     let value = parseFloat(event.value);
-    if (Number.isNaN(value)) {
+    if (Number.isNaN(value)) 
+    {
       document.getElementById('spend-amount').value = "0.00";
-    } else {
+    } 
+    else 
+    {
       document.getElementById('spend-amount').value = value.toFixed(2);
     }              
-  }
+}
 
 /************************* Check Spend amount is never zero for gauge *************************/
 function checkSpendAmount(input) 
@@ -152,6 +156,7 @@ function checkSpendAmount(input)
     //     input = parseFloat(input).toFixed(2) 
     //   }
 }
+
 /************************* Filter Table *************************/
 function filterTable(data) 
 {
@@ -159,7 +164,7 @@ function filterTable(data)
     var tbody = d3.select('.stock-table-body');
 
     // filter table based on remaining amount
-    filteredData = data[0].datatable.data[0];
+    data[0].datatable.data[0];
     console.log(filteredData)
     // // Use for each to create a table with ALL the data
     // data[0].datatable.data.forEach(stock => 
@@ -205,7 +210,7 @@ function filterTable(data)
     //     row.append("td").text(ticker.other_info); }); //end for each    
 }
 
-// /************************* getStocks_event *************************/
+/************************* getStocks_event *************************/
 function getStocks_event() 
 {
     console.log("button click")
