@@ -16,6 +16,9 @@
       color: #f5f5f1;
   }
 
+  p{
+    font-size: medium;
+  }
 /* The wrapper contains all of the page's content besides the footer, which is pushed to the bottom of the page */
 .wrapper {
     position: relative;
@@ -193,5 +196,5 @@
     }
 
     .input-area{
-      margin-top: 100px;
+      margin-top: 50px;
     }

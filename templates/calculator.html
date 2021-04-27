@@ -33,18 +33,20 @@
         </nav>
 
         <!-- Input, Buttons and Gauge-->
-        <div class="container" style="padding-top: 20px;">
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="spend-amount">I want to spend: $</label>
-                    <input type="number" id="spend-amount" name="spend-amount" min="0.00" max="1000000.00" value="0.00" step=".50"  onchange="dollarsNotInt(this)">
-                    <div class="buttons">
-                        <button type="button" id="get-stocks" name="get-stocks" class="get-button">Get Stocks</button>
-                        <button type="button" id="reset" name="reset" class="reset-button">Reset Table</button>
+        <div class="container">
+            <div class="input-area">
+                <div class="row">
+                    <div class="col-md-6" style="padding-top: 55px;">
+                        <label for="spend-amount">I want to spend: $</label>
+                        <input type="number" id="spend-amount" name="spend-amount" min="0.00" max="1000000.00" value="0.00" step=".50"  onchange="dollarsNotInt(this)">
+                        <div class="buttons">
+                            <button type="button" id="get-stocks" name="get-stocks" class="get-button">Get Stocks</button>
+                            <button type="button" id="reset" name="reset" class="reset-button">Reset Table</button>
+                        </div>
                     </div>
-                </div>
-                 <!-- Div for guage -->
-                <div class="col-md-4" id="gauge">
+                     <!-- Div for guage -->
+                    <div class="col-md-6" id="gauge">
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,7 +55,7 @@
         <div class="charts" style="padding-left: 20px;">
             <div class="row">
                  <!-- stock table -->
-                <div class="col-md-6">
+                <div class="col-md-7">
                     <table class="stock-table table table-striped table-hover">
                         <thead class="stock-table-head">
                             <tr>
@@ -72,7 +74,7 @@
                 </div>
             <!-- horizontal bar chart -->
                 
-                <div id="bar-chart" class="col-md-6">
+                <div id="bar-chart" class="col-md-5">
 
                 </div>
             </div>
