@@ -1,10 +1,3 @@
-/***************** Fetch data from JSON file *******************/
-//json path
-const path = "../static/js/sampledata.json"
-
-// quandl & polygon combo json
-var spydata = d3.json(path)
-
 /********** Declare variables for use in functions *******/
 
 // for barchart
@@ -20,34 +13,41 @@ var spend_amount = 50;
 // colors list rgb [ [low], [med], [high] ]
 var colors = [[45, 160, 227], [152, 74, 255], [251, 43, 255]]
 
-/****************************************************************
-                        On page load
-****************************************************************/
-spydata.then(function (data) 
-{
-    // check .json results 
-    console.log(data[0].datatable.data[0]);
-    //Create ALL stocks table
-    allStocksTable(data) 
-    barChart(X_tkrsymb, Y_divtimesqty)
-    gauge(remaining_amount, spend_amount, dollar_min)
-});
+/***************** Fetch data from JSON file *******************/
+//json path
+const path = "../static/js/sampledata.json"
+
+// quandl & polygon combo json
+d3.json(path).then(spydata => 
+{ 
 
 /****************************************************************
                         User Interactions
 ****************************************************************/
 
+var qtyInput_row = d3.selectAll('.tkr_row')
+
+qtyInput_row.on('input', qtyInput_event(remaining_amount))
+
 // Identify user input field
 var dollars_input = d3.select('#spend-amount');
+dollars_input.on('change', dollarsNotInt)
 
 // Identify button for change event
 var getStocks_button = d3.select('#get-stocks')
-
 getStocks_button.on('click', getStocks_event)
 
-var qtyInput_row = d3.selectAll('.tkr_row')
+console.log(spydata)
 
-// qtyInput_row.on('input', qtyInput_event(remaining_amount))
+/****************************************************************
+                        On page load
+****************************************************************/
+// check .json results 
+console.log(spydata[0].datatable.data[0]);
+//Create ALL stocks table
+allStocksTable(spydata) 
+barChart(X_tkrsymb, Y_divtimesqty)
+gauge(remaining_amount, spend_amount, dollar_min)
 
 /****************************************************************
                         FUNCTIONS
@@ -121,20 +121,6 @@ function gauge(remaining_amount, spend_amount, dollar_min)
     Plotly.newPlot('gauge', data, layout);
 }
 
-/************************* Set input field always has 2 decimals *************************/
-function dollarsNotInt(event) 
-{
-    let value = parseFloat(event.value);
-    if (Number.isNaN(value)) 
-    {
-      document.getElementById('spend-amount').value = "0.00";
-    } 
-    else 
-    {
-      document.getElementById('spend-amount').value = value.toFixed(2);
-    }              
-}
-
 /************************* Check Spend amount is never zero for gauge *************************/
 function checkSpendAmount(input) 
 {
@@ -154,16 +140,18 @@ function checkSpendAmount(input)
     //   }
 }
 
-/************************* Filter Table *************************/
+/************************* build the table with filteredData *************************/
 function filterTable(data, remaining_amount) 
 {
     // refrence the table body to build table in 
     var tbody = d3.select('.stock-table-body');
-    
+ 
     var filteredData = data[0].datatable.data;
-
+        console.log(`filterTable function Resuts: ${filteredData}`)
+    
     filteredData = filteredData.filter(stock => stock[3] <= remaining_amount)
     console.log(`filterTable function Resuts: ${filteredData}`)
+    
     // Return an error msg if filter function returns no tickers price less than or equal to remaining amount
     if (filteredData.length === 0 )
     {
@@ -196,11 +184,25 @@ function filterTable(data, remaining_amount)
             // rate of return
             row.append("td").text(stock[4]).classed('returnRate', true);
         });
-    } 
-}// end entire function
+    }
+}
 
 /************************* getStocks_event *************************/
-function getStocks_event() 
+function getStocks_event()
+{
+    console.log('get stocks event triggered')
+
+    var returnValues = returnValuesforEvents()
+    var remaining_amount = returnValues[0]
+    var spend_amount = returnValues[1]
+    //Create filtered stocks table
+    filterTable(spydata, remaining_amount);
+    // Call gauge function
+    gauge(remaining_amount, spend_amount, dollar_min);
+}
+
+/*************************** returnValuesforEvents ***************************************/
+function returnValuesforEvents()
 {
     console.log("get stock button click")
 
@@ -219,44 +221,65 @@ function getStocks_event()
         // set remaining amount to spend amount for full gauge & inital filter value
         var remaining_amount = Math.round(parseFloat(spend_amount),2);
         console.log(`getStocks_event remaining_amount: ${remaining_amount}`)
-
-        // Call table filter function
-        spydata.then(function (data) 
-        {
-            //Create filtered stocks table
-            filterTable(data, remaining_amount);
-            // Call gauge function
-            gauge(remaining_amount, spend_amount, dollar_min);
-        });
-
-        return remaining_amount
     }
+    return [remaining_amount, spend_amount];
+}
+
+/************************* Set input field always has 2 decimals *************************/
+function dollarsNotInt(event) 
+{
+    let value = parseFloat(d3.select(this).property('value'));
+    if (Number.isNaN(value)) 
+    {
+      document.getElementById('spend-amount').value = "0.00";
+    } 
+    else 
+    {
+      document.getElementById('spend-amount').value = value.toFixed(2);
+    }      
+    console.log(value)        
 }
 
 /************************* qtyInput_event *************************/
 function qtyInput_event() 
 {
+    // **this function does not separate on click from 2**
+    //pull values returned from previous function
+    var returnValues = returnValuesforEvents()
+    // grab only remaining_amount from array return
+    var remaining_amount = Math.round(parseFloat(returnValues[0]),2)
     console.log(`Remaining Amount starts at: ${remaining_amount}`)
+
     // grab row values only on the row that was changed
-    var stockQty = this.d3.select('.stockQty').property('value')
+    var stockQty = parseFloat(this.d3.select('.stockQty').property('value'))
     console.log(`stockQty was entered: ${stockQty}`)
-    var price = this.d3.select('.price').property('value')
-    var div_rate = this.d3.select('.divRate').property('value')
-    var tkr_symb = this.d3.select('.tkrSymbol').property('value')
-    var return_rate = this.d3.select('.returnRate').property('value')
+    var price = parseFloat(this.d3.select('.price').text())
+    var div_rate = parseFloat(this.d3.select('.divRate').text())
+    var tkr_symb = this.d3.select('.tkrSymbol').text()
+    var return_rate = parseFloat(this.d3.select('.returnRate').text())
 
-    // REdefine variable remaining_amount == remaining_amount - (Qty_entered * price) 
-    // var remaining_amount = remaining_amount-(parseInt(stockQty)*parseInt(price))
+    // REdefine variable remaining_amount == remaining_amount - (input value * price) 
+    var remaining_amount = Math.round((remaining_amount-(stockQty*price)),2)
+    console.log(`remaining amount after calac: ${remaining_amount}`)
+    
+    // crate variable for use in barchart 
+    // **change price to div rate**
+    var revenue = Math.round((stockQty * price),2)
+    console.log(revenue)
 
-    // console.log(`remaining_amount - (Price * Qty) = ${remaining_amount}`)
-    // var revenue = Qty_entered * div_rate
+    // push calculations to arrays for barchart axis
     X_tkrsymb.push(tkr_symb)
-    console.log(`Titker symbol: ${tkr_symb}`)
-    Y_divtimesqty.push(price)
-    console.log(`Return rate: ${price}`)
+    console.log(`Ticker symbol: ${tkr_symb}`)
+    Y_divtimesqty.push(revenue)
+    console.log(Y_divtimesqty)
+
     // Call Filter Table function to filter table based on new remaining amount
+    // filterTable(data, remaining_amount)
+
     // Call Gauge function to move gauge down according to new remaining amount
     // Call barchart function to add the x & y values according to new lists
     barChart(X_tkrsymb, Y_divtimesqty)
     
 }
+
+}) // end .then function
