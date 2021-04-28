@@ -19,10 +19,13 @@ conn = engine.connect()
 
 # Using pandas to read data out of SQL
 data = pd.read_sql("Select * from openClose as o \
-                    join company as c on (c.Ticker = o.symbol) \
+                    join company as c on (c.Symbol = o.symbol) \
                     left join dividend as d on (o.symbol = d.Symbol)", conn)
+thing = data.columns
+print(thing)
 del data['index']
-del data['Unnamed: 0']
+del data['Symbol']
+#del data['Unnamed: 0']
 result = data.to_json('static/data/openClose.json',orient="records")
 print(result)
 # use engine to connect to existing tables/db
