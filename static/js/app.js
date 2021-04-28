@@ -1,5 +1,6 @@
-/********** Declare variables for use in functions *******/
-
+/****************************************************************
+            Declare variables for use in functions
+****************************************************************/
 // for barchart
 var X_tkrsymb = [ ];
 var Y_divtimesqty = [ ];
@@ -13,12 +14,17 @@ var spend_amount = 50;
 // colors list rgb [ [low], [med], [high] ]
 var colors = [[45, 160, 227], [152, 74, 255], [251, 43, 255]]
 
-/***************** Fetch data from JSON file *******************/
+// Identify user input field
+var dollars_input = d3.select('#spend-amount');
+
+/****************************************************************
+                Fetch data from JSON file
+****************************************************************/
 //json path
-const path = "../static/js/sampledata.json"
+const path = "../static/data/openClose.json"
 
 // quandl & polygon combo json
-d3.json(path).then(spydata => 
+d3.json(path).then(stockdata => 
 { 
 
 /****************************************************************
@@ -27,25 +33,23 @@ d3.json(path).then(spydata =>
 
 var qtyInput_row = d3.selectAll('.tkr_row')
 
-qtyInput_row.on('input', qtyInput_event(remaining_amount))
+// qtyInput_row.on('input', qtyInput_event(remaining_amount))
 
-// Identify user input field
-var dollars_input = d3.select('#spend-amount');
 dollars_input.on('change', dollarsNotInt)
 
 // Identify button for change event
 var getStocks_button = d3.select('#get-stocks')
 getStocks_button.on('click', getStocks_event)
 
-console.log(spydata)
+console.log(stockdata)
 
 /****************************************************************
                         On page load
 ****************************************************************/
 // check .json results 
-console.log(spydata[0].datatable.data[0]);
+console.log(stockdata[0]);
 //Create ALL stocks table
-allStocksTable(spydata) 
+allStocksTable(stockdata) 
 barChart(X_tkrsymb, Y_divtimesqty)
 gauge(remaining_amount, spend_amount, dollar_min)
 
@@ -54,29 +58,49 @@ gauge(remaining_amount, spend_amount, dollar_min)
 ****************************************************************/
 
 /************************* Create All data table *************************/
-function allStocksTable(data) 
+function allStocksTable(anyData) 
 {
     // refrence the table body to build table in 
     var tbody = d3.select('.stock-table-body');
+   
     // Use for each to create a table with ALL the data
-    data[0].datatable.data.forEach(stock => 
+    anyData.map(stock => 
     {
+        // use data to define price and div amount for roi func
+        var price = stock.close.toFixed(2)
+        var divAmount = stock['Amount ($)']
         //Append a tr to the table body tag
         var row = tbody.append('tr');
         // Append td.text  for each info column
         // qty col does not currently contain input
         row.append("td").text('');
         // tkr symbol col
-        row.append("td").text(stock[1]);
+        row.append("td").text(stock.symbol);
         // company name
-        row.append("td").text(stock[0]);
+        row.append("td").text(stock.Company);
         // stock price
-        row.append("td").text(stock[3]);
+        row.append("td").text(price);
         // dividend rate
-        row.append("td").text(stock[2]);
+        row.append("td").text(`$${divAmount}`);
         // rate of return
-        row.append("td").text(stock[4]);
+        row.append("td").text(`${ROI(price, divAmount)}`);
     });
+}
+
+/************************* calculate rate of return for table *************************/
+function ROI(price, divAmount) 
+{
+    // check to see if stock returns a div amount
+    if (divAmount === '' || divAmount === undefined || divAmount === null) 
+    {
+        var roi = 'No dividends paid'
+    }
+    else
+    {
+        var roi = ((parseFloat(divAmount) / parseFloat(price))*100)
+    }
+    // console.log([divAmount, price, roi])
+    return roi
 }
 
 /************************* Bar Chart *************************/
@@ -98,7 +122,7 @@ Plotly.newPlot('bar-chart', data);
 /************************* Gauge *************************/
 function gauge(remaining_amount, spend_amount, dollar_min)
 {
-    // console.log(`Remaining Amount ${remaining_amount}`)
+    console.log(`GuageFunc Triggered. RemainaingAmt: ${remaining_amount}`)
     // console.log(`Spend Amount ${spend_amount}`)
     var data = 
     [{
@@ -140,20 +164,44 @@ function checkSpendAmount(input)
     //   }
 }
 
+/************************* getStocks_event *************************/
+function getStocks_event()
+{
+    console.log('get stocks event triggered')
+
+    var returnValues = spend_amount2remaining_amount()
+    var remaining_amount = returnValues[0]
+    var spend_amount = returnValues[1]
+    //Create filtered stocks table
+    filterTable(stockdata, remaining_amount);
+    // Call gauge function
+    gauge(remaining_amount, spend_amount, dollar_min);
+}
+
+/************************* use remaining amount to filter Data *************************/
+function filteredData(anyData, remaining_amount) 
+{
+var filtered_data = anyData;
+// console.log(`filterTable function Resuts: ${filtered_data}`)
+
+// compare the stocks data to the remaining amount
+filtered_data = filtered_data.filter(stock => stock.close <= remaining_amount)
+// console.log(`filterData function Resuts: ${filtered_data}`)
+
+return filtered_data
+}
+
 /************************* build the table with filteredData *************************/
-function filterTable(data, remaining_amount) 
+function filterTable(anyData, remaining_amount) 
 {
     // refrence the table body to build table in 
     var tbody = d3.select('.stock-table-body');
- 
-    var filteredData = data[0].datatable.data;
-        console.log(`filterTable function Resuts: ${filteredData}`)
-    
-    filteredData = filteredData.filter(stock => stock[3] <= remaining_amount)
-    console.log(`filterTable function Resuts: ${filteredData}`)
-    
+    // bring in data filtered by remaining amount
+    var filtered_data = filteredData(anyData,remaining_amount)
+    // console.log(`filterTable function Resuts: ${filtered_data}`)
+
     // Return an error msg if filter function returns no tickers price less than or equal to remaining amount
-    if (filteredData.length === 0 )
+    if (filtered_data.length === 0 )
     {
         // clear all data rows
         tbody.html('');
@@ -166,43 +214,32 @@ function filterTable(data, remaining_amount)
     {
         // clear all data rows
         tbody.html('');
+
         // Use for each to create a table with ALL the data
-        filteredData.forEach(stock => 
+        filtered_data.forEach(stock => 
         {
+            // use data to define price and div amount for roi func
+            var price = stock.close
+            var divAmount = stock['Amount ($)']
             //Append a tr to the table body tag
             var row = tbody.append('tr').classed('tkr_row', true);
             // qty col now contains an input area
             row.append("td").html('<input type="number" class="stockQty" name="stockQty" min="0" max="1000000" value="0" step="1" onchange="qtyInput_event(this)">');
             // tkr symbol col
-            row.append("td").text(stock[1]).classed('tkrSymbol', true);
+            row.append("td").text(stock.symbol).classed('tkrSymbol', true);
             // company name
-            row.append("td").text(stock[0]).classed('coName', true);
+            row.append("td").text(stock.Company).classed('coName', true);
             // stock price
-            row.append("td").text(stock[3]).classed('price', true);
+            row.append("td").text(price).classed('price', true);
             // dividend rate
-            row.append("td").text(stock[2]).classed('divRate', true);
+            row.append("td").text(divAmount).classed('divRate', true);
             // rate of return
-            row.append("td").text(stock[4]).classed('returnRate', true);
+            row.append("td").text(`${ROI(price, divAmount)}`).classed('returnRate', true);
         });
     }
 }
-
-/************************* getStocks_event *************************/
-function getStocks_event()
-{
-    console.log('get stocks event triggered')
-
-    var returnValues = returnValuesforEvents()
-    var remaining_amount = returnValues[0]
-    var spend_amount = returnValues[1]
-    //Create filtered stocks table
-    filterTable(spydata, remaining_amount);
-    // Call gauge function
-    gauge(remaining_amount, spend_amount, dollar_min);
-}
-
-/*************************** returnValuesforEvents ***************************************/
-function returnValuesforEvents()
+/*************************** turn spend_amount into remaining_amount ***************************************/
+function spend_amount2remaining_amount()
 {
     console.log("get stock button click")
 
@@ -237,7 +274,7 @@ function dollarsNotInt(event)
     {
       document.getElementById('spend-amount').value = value.toFixed(2);
     }      
-    console.log(value)        
+    console.log(value)         
 }
 
 /************************* qtyInput_event *************************/
@@ -281,5 +318,7 @@ function qtyInput_event()
     barChart(X_tkrsymb, Y_divtimesqty)
     
 }
+
+
 
 }) // end .then function
