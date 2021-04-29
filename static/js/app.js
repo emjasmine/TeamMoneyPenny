@@ -14,8 +14,14 @@ var spend_amount = 50;
 // colors list rgb [ [low], [med], [high] ]
 var colors = [[45, 160, 227], [152, 74, 255], [251, 43, 255]]
 
-// Identify user input field
+// Identify user amount input field
 var dollars_input = d3.select('#spend-amount');
+
+// Identify button for change event
+var getStocks_button = d3.select('#get-stocks')
+
+// Identify ticker row for stock data
+var qtyInput_row = d3.selectAll('.tkr_row')
 
 /****************************************************************
                 Fetch data from JSON file
@@ -31,17 +37,16 @@ d3.json(path).then(stockdata =>
                         User Interactions
 ****************************************************************/
 
-var qtyInput_row = d3.selectAll('.tkr_row')
-
-// qtyInput_row.on('input', qtyInput_event(remaining_amount))
-
+// user enters a spend amount
 dollars_input.on('change', dollarsNotInt)
 
-// Identify button for change event
-var getStocks_button = d3.select('#get-stocks')
+// user clicks get stock button
 getStocks_button.on('click', getStocks_event)
 
-console.log(stockdata)
+// user enters a qty on ticker row
+// qtyInput_row.on('input', qtyInput_event(remaining_amount))
+
+// console.log(stockdata)
 
 /****************************************************************
                         On page load
@@ -77,7 +82,7 @@ function allStocksTable(anyData)
         // tkr symbol col
         row.append("td").text(stock.symbol);
         // company name
-        row.append("td").text(stock.Company);
+        row.append("td").text(stock.Name);
         // stock price
         row.append("td").text(price);
         // dividend rate
@@ -228,7 +233,7 @@ function filterTable(anyData, remaining_amount)
             // tkr symbol col
             row.append("td").text(stock.symbol).classed('tkrSymbol', true);
             // company name
-            row.append("td").text(stock.Company).classed('coName', true);
+            row.append("td").text(stock.Name).classed('coName', true);
             // stock price
             row.append("td").text(price).classed('price', true);
             // dividend rate
@@ -238,6 +243,24 @@ function filterTable(anyData, remaining_amount)
         });
     }
 }
+
+/************************* Set input field always has 2 decimals *************************/
+function dollarsNotInt(event) 
+{
+    let value = parseFloat(d3.select(this).property('value'));
+    if (Number.isNaN(value)) 
+    {
+      document.getElementById('spend-amount').value = "0.00";
+    } 
+    else 
+    {
+      document.getElementById('spend-amount').value = value.toFixed(2);
+    }      
+    console.log(value)         
+}
+
+}) // end .then function
+
 /*************************** turn spend_amount into remaining_amount ***************************************/
 function spend_amount2remaining_amount()
 {
@@ -262,32 +285,18 @@ function spend_amount2remaining_amount()
     return [remaining_amount, spend_amount];
 }
 
-/************************* Set input field always has 2 decimals *************************/
-function dollarsNotInt(event) 
-{
-    let value = parseFloat(d3.select(this).property('value'));
-    if (Number.isNaN(value)) 
-    {
-      document.getElementById('spend-amount').value = "0.00";
-    } 
-    else 
-    {
-      document.getElementById('spend-amount').value = value.toFixed(2);
-    }      
-    console.log(value)         
-}
-
 /************************* qtyInput_event *************************/
-function qtyInput_event() 
+function qtyInput_event(remaining_amount) 
 {
-    // **this function does not separate on click from 2**
+    console.log('get stocks event triggered')
+    // **this function does not separate one click from 2 clicks**
     //pull values returned from previous function
-    var returnValues = returnValuesforEvents()
-    // grab only remaining_amount from array return
-    var remaining_amount = Math.round(parseFloat(returnValues[0]),2)
-    console.log(`Remaining Amount starts at: ${remaining_amount}`)
+    // var returnValues = [spend_amount2remaining_amount()]
+    // // grab only remaining_amount from array return
+    // var remaining_amount = Math.round(parseFloat(returnValues[0]),2)
+    
 
-    // grab row values only on the row that was changed
+    // // grab row values only on the row that was changed
     var stockQty = parseFloat(this.d3.select('.stockQty').property('value'))
     console.log(`stockQty was entered: ${stockQty}`)
     var price = parseFloat(this.d3.select('.price').text())
@@ -295,30 +304,23 @@ function qtyInput_event()
     var tkr_symb = this.d3.select('.tkrSymbol').text()
     var return_rate = parseFloat(this.d3.select('.returnRate').text())
 
-    // REdefine variable remaining_amount == remaining_amount - (input value * price) 
-    var remaining_amount = Math.round((remaining_amount-(stockQty*price)),2)
-    console.log(`remaining amount after calac: ${remaining_amount}`)
+    // call function to subtract (input value * price) from remaining_amount
     
-    // crate variable for use in barchart 
-    // **change price to div rate**
-    var revenue = Math.round((stockQty * price),2)
-    console.log(revenue)
+    // call function to calculate the revenue for barchart (qty * divrate)
+        // push calculations to arrays for barchart axis
+        // X_tkrsymb.push(tkr_symb)
+        // console.log(`Ticker symbol: ${tkr_symb}`)
+        // Y_divtimesqty.push(revenue)
+        // console.log(Y_divtimesqty)
 
-    // push calculations to arrays for barchart axis
-    X_tkrsymb.push(tkr_symb)
-    console.log(`Ticker symbol: ${tkr_symb}`)
-    Y_divtimesqty.push(revenue)
-    console.log(Y_divtimesqty)
+    // // Call Filter Table function to filter table based on new remaining amount
+    // // filterTable(data, remaining_amount)
 
-    // Call Filter Table function to filter table based on new remaining amount
-    // filterTable(data, remaining_amount)
-
-    // Call Gauge function to move gauge down according to new remaining amount
-    // Call barchart function to add the x & y values according to new lists
-    barChart(X_tkrsymb, Y_divtimesqty)
+    // // Call Gauge function to move gauge down according to new remaining amount
+    // // Call barchart function to add the x & y values according to new lists
+    // barChart(X_tkrsymb, Y_divtimesqty)
     
 }
 
 
 
-}) // end .then function
