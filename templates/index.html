@@ -15,6 +15,12 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <!--D3-->
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <!-- jQuery -->
+  
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="../static/js/main.js"></script>
+
     <title>Team Money Penny</title>
 </head>
 <body>
@@ -118,12 +124,21 @@
           </div>
 
         </div>
+        <!-- Div for JQuery exploding text -->
+        <div  style="padding:100px;text-align: center;background-color: darkgrey;">
+          <button type="button" id="explode-button" class="btn-main">
+            <!-- <span>Accept Mission</span> -->
+          </button>
+          <!-- <span class="target" id="hide" style="color: yellow;font-size: xx-large;">Accept Mission</span> -->
+          <!-- <span onclick="fx(this)">Accept Mission</span> -->
+        </div>
+  
         <!-- Div for the Footer -->
         <footer class="footer">
           <div class="container" style="padding-top: 20px;">
             <div class="row">
                 <div class="col-md-6">
-                    <span class="bottom">
+                    <div class="bottom">
                         <h2>Sources:</h2>
                         <ul class="source-list">
                             <!-- data source for our stock data -->
@@ -133,7 +148,7 @@
                             <!-- source for our Russell 1000  -->
                             <li><a class="footer-text" href="https://research.ftserussell.com/Analytics/FactSheets/temp/3f3741fa-5be6-45d9-83d3-e02cd5d7331a.pdf">Russell 1000</a></li>
                         </ul>
-                    </span>
+                      </div>
                 </div>
                 <div class="col-md-6" style="text-align: right; color: white; padding-top: 20px;">
                     <p>Data refreshes every 8 hours</p>
@@ -145,6 +160,7 @@
     </div>
      <script src="../static/js/sampledata.json"></script>
     <script src="../static/js/app.js"></script>
+    <!-- <script src="../static/js/main.js"></script> -->
    
 </body>
 </html>

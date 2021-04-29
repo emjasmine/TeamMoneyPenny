@@ -22,6 +22,8 @@ var getStocks_button = d3.select('#get-stocks')
 
 // Identify ticker row for stock data
 var qtyInput_row = d3.selectAll('.tkr_row')
+ // Identify reset button for change event
+ var reset_button = d3.select('#reset')
 
 /****************************************************************
                 Fetch data from JSON file
@@ -48,6 +50,9 @@ getStocks_button.on('click', getStocks_event)
 
 // console.log(stockdata)
 
+//on click remaining amount = spend amount, gauge resets back to full spend amount and table 
+//shows all stock data again, and bar graph goes back to empty
+reset_button.on('click', getStocks_event) 
 /****************************************************************
                         On page load
 ****************************************************************/
@@ -324,3 +329,40 @@ function qtyInput_event(remaining_amount)
 
 
 
+
+// /********** Radial Chart - Top 10 Stock *****************/ 
+// //Identify the Top 10 Stock by dividend amount
+//     //Sort openClose data by dividend in descending order
+//     //Grap the first 10 and place in list
+//     //format should be ticker: tck_symbol, dividend:div_rate
+//     Top_10 = []
+
+//     // radial chart plot
+//     chart = {
+//         const svg = d3.select(bubble-graph.svg(width, height))
+//             .attr("viewBox", `${-width / 2} ${-height * 0.69} ${width} ${height}`)
+//             .style("width", "100%")
+//             .style("height", "auto")
+//             .style("font", "10px sans-serif");
+      
+//         svg.append("g")
+//           .selectAll("g")
+//           .data(d3.stack().keys(data.columns.slice(1))(data))
+//           .join("g")
+//             .attr("fill", d => z(d.key))
+//           .selectAll("path")
+//           .data(d => d)
+//           .join("path")
+//             .attr("d", arc);
+      
+//         svg.append("g")
+//             .call(xAxis);
+      
+//         svg.append("g")
+//             .call(yAxis);
+      
+//         svg.append("g")
+//             .call(legend);
+      
+//         return svg.node();
+//       }
