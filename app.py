@@ -20,6 +20,7 @@ conn = engine.connect()
 data = pd.read_sql("Select * from openClose as o \
                     join company as c on (c.Symbol = o.symbol) \
                     left join dividend as d on (o.symbol = d.Symbol)", conn)
+print(data)
 thing = data.columns
 sorted_data = data.sort_values(by='Amount ($)', ascending=False)
 print(thing)
