@@ -22,11 +22,12 @@ data = pd.read_sql("Select * from openClose as o \
                     join company as c on (c.Symbol = o.symbol) \
                     left join dividend as d on (o.symbol = d.Symbol)", conn)
 thing = data.columns
+sorted_data = data.sort_values(by='Amount ($)', ascending=False)
 print(thing)
-del data['index']
-del data['Symbol']
+del sorted_data['index']
+del sorted_data['Symbol']
 #del data['Unnamed: 0']
-result = data.to_json('static/data/openClose.json',orient="records")
+result = sorted_data.to_json('static/data/openClose.json',orient="records")
 print(result)
 # use engine to connect to existing tables/db
 #base = automap_base()
