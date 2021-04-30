@@ -3,7 +3,7 @@
 ****************************************************************/
 // for barchart
 var X_tkrsymb = [ ];
-var Y_divtimesqty = [ ];
+var Y_revenue = [ ];
 
 // set all variables to zero for empty gauge
 var dollar_min = 0;
@@ -36,17 +36,11 @@ d3.json(path).then(stockdata =>
 /****************************************************************
                         User Interactions
 ****************************************************************/
-
 // user enters a spend amount
 dollars_input.on('change', dollarsNotInt)
 
 // user clicks get stock button
 getStocks_button.on('click', getStocks_event)
-
-// user enters a qty on ticker row
-// qtyInput_row.on('input', qtyInput_event(remaining_amount))
-
-// console.log(stockdata)
 
 /****************************************************************
                         On page load
@@ -55,7 +49,7 @@ getStocks_button.on('click', getStocks_event)
 console.log(stockdata[0]);
 //Create ALL stocks table
 allStocksTable(stockdata) 
-barChart(X_tkrsymb, Y_divtimesqty)
+barChart(X_tkrsymb, Y_revenue)
 gauge(remaining_amount, spend_amount, dollar_min)
 
 /****************************************************************
@@ -111,27 +105,30 @@ function ROI(price, divAmount)
 /************************* Bar Chart *************************/
 function barChart(x,y) 
 {
-//Create a blank chart 
-var data = 
-[{ 
-    x: x,
-    y: y,
-    type: 'bar',
-    orientation: 'h'
-}];
+    var data = [{
+        values: x,
+        labels: y,
+        type: 'pie'
+      }];
+      
+      var layout = {
+        height: 800,
+        width: 900
+      };
 
 //Add chart to empty div
-Plotly.newPlot('bar-chart', data);
+Plotly.newPlot('bar-chart', data, layout);
 }
 
 /************************* Gauge *************************/
-function gauge(remaining_amount, spend_amount, dollar_min)
+function gauge(remaining_amount, spend_amount)
 {
     console.log(`GuageFunc Triggered. RemainaingAmt: ${remaining_amount}`)
     // console.log(`Spend Amount ${spend_amount}`)
     var data = 
     [{
         value: remaining_amount,
+        number: { prefix: "$", valueformat: '.' + 2 + 'f'},
         title: { text: "Remaining Amount ($)" },
         type: "indicator",
         mode: "gauge+number", 
@@ -150,54 +147,33 @@ function gauge(remaining_amount, spend_amount, dollar_min)
     Plotly.newPlot('gauge', data, layout);
 }
 
-/************************* Check Spend amount is never zero for gauge *************************/
-function checkSpendAmount(input) 
-{
-    // // make sure amount is float 2 decimals
-    // var input = parseFloat(input).toFixed(2);
-    // console.log(input)
-
-    // // check for zero dollar spend amount so that gauge doesnt error
-    //   if (input === 0.00) 
-    //   {
-    //     input = 50.00
-    // error msg
-    //   } 
-    //   else 
-    //   {
-    //     input = parseFloat(input).toFixed(2) 
-    //   }
-}
-
 /************************* getStocks_event *************************/
 function getStocks_event()
 {
-    console.log('get stocks event triggered')
-
-    var returnValues = spend_amount2remaining_amount()
-    var remaining_amount = returnValues[0]
-    var spend_amount = returnValues[1]
+    spend_amount2remaining_amount()
     //Create filtered stocks table
     filterTable(stockdata, remaining_amount);
     // Call gauge function
     gauge(remaining_amount, spend_amount, dollar_min);
+    console.log(`get stocks event triggered remaining amount:${remaining_amount}`)
+    barChart([0], [0])
 }
 
 /************************* use remaining amount to filter Data *************************/
-function filteredData(anyData, remaining_amount) 
+function filteredData(anyData, anyAmount) 
 {
 var filtered_data = anyData;
 // console.log(`filterTable function Resuts: ${filtered_data}`)
 
 // compare the stocks data to the remaining amount
-filtered_data = filtered_data.filter(stock => stock.close <= remaining_amount)
+filtered_data = filtered_data.filter(stock => stock.close <= anyAmount)
 // console.log(`filterData function Resuts: ${filtered_data}`)
 
 return filtered_data
 }
 
 /************************* build the table with filteredData *************************/
-function filterTable(anyData, remaining_amount) 
+function filterTable(anyData) 
 {
     // refrence the table body to build table in 
     var tbody = d3.select('.stock-table-body');
@@ -229,7 +205,7 @@ function filterTable(anyData, remaining_amount)
             //Append a tr to the table body tag
             var row = tbody.append('tr').classed('tkr_row', true);
             // qty col now contains an input area
-            row.append("td").html('<input type="number" class="stockQty" name="stockQty" min="0" max="1000000" value="0" step="1" onchange="qtyInput_event(this)">');
+            row.append("td").html('<input type="number" class="stockQty" name="stockQty" min="0" max="1000000" value="0" step="1">');
             // tkr symbol col
             row.append("td").text(stock.symbol).classed('tkrSymbol', true);
             // company name
@@ -242,6 +218,8 @@ function filterTable(anyData, remaining_amount)
             row.append("td").text(`${ROI(price, divAmount)}`).classed('returnRate', true);
         });
     }
+    // user enters a qty on ticker row
+    d3.selectAll('.tkr_row').on('change', qtyInput_event)
 }
 
 /************************* Set input field always has 2 decimals *************************/
@@ -255,20 +233,15 @@ function dollarsNotInt(event)
     else 
     {
       document.getElementById('spend-amount').value = value.toFixed(2);
-    }      
-    console.log(value)         
+    }           
 }
-
-}) // end .then function
 
 /*************************** turn spend_amount into remaining_amount ***************************************/
 function spend_amount2remaining_amount()
 {
-    console.log("get stock button click")
-
     // redefine spend_amount on user input
-    var spend_amount = parseFloat(dollars_input.property('value')).toFixed(2);
-    console.log(`getStocks_event spend_amount: ${spend_amount}`)
+    spend_amount = parseFloat(dollars_input.property('value')).toFixed(2);
+    console.log(`spend_amount2remaining_amount spend_amount: ${spend_amount}`)
 
     // if the spend_amount is blank or zero then do nothing
     if (spend_amount === '0.00' || spend_amount === undefined || spend_amount === '0') 
@@ -279,48 +252,65 @@ function spend_amount2remaining_amount()
     else 
     {
         // set remaining amount to spend amount for full gauge & inital filter value
-        var remaining_amount = Math.round(parseFloat(spend_amount),2);
-        console.log(`getStocks_event remaining_amount: ${remaining_amount}`)
+        remaining_amount = parseFloat(spend_amount);
+        console.log(`spend_amount2remaining_amount remaining_amount: ${remaining_amount}`)
     }
     return [remaining_amount, spend_amount];
 }
 
+/************************* qty * price - remainaing amount *************************/
+function adjustRemaining_Amount(stockQty,price) 
+{
+    // subtract (stockQty * price) from remaining_amount
+    remaining_amount = remaining_amount - (stockQty * price)
+    console.log(`New remaining_amount: ${remaining_amount}`)
+    return remaining_amount
+}
+
+/************************* qtyInput_event *************************/
+function Revenue(stockQty,div_rate)
+{
+    //calculate the revenue for barchart
+    var revenue = parseFloat(stockQty) * parseFloat(div_rate)
+    Y_revenue.push(revenue)
+    console.log(`Revenue stockQty: ${stockQty}`)
+    console.log(`Revenue div_rate: ${div_rate}`)
+    console.log(`Revenue: ${revenue}`)
+    return revenue
+}
 /************************* qtyInput_event *************************/
 function qtyInput_event(remaining_amount) 
 {
-    console.log('get stocks event triggered')
-    // **this function does not separate one click from 2 clicks**
-    //pull values returned from previous function
-    // var returnValues = [spend_amount2remaining_amount()]
-    // // grab only remaining_amount from array return
-    // var remaining_amount = Math.round(parseFloat(returnValues[0]),2)
-    
+    console.log('qtyInput_event triggered')
 
-    // // grab row values only on the row that was changed
-    var stockQty = parseFloat(this.d3.select('.stockQty').property('value'))
+    // grab row values only on the row that was changed
+    var stockQty = d3.select(this).select('.stockQty').property('value')
     console.log(`stockQty was entered: ${stockQty}`)
-    var price = parseFloat(this.d3.select('.price').text())
-    var div_rate = parseFloat(this.d3.select('.divRate').text())
-    var tkr_symb = this.d3.select('.tkrSymbol').text()
-    var return_rate = parseFloat(this.d3.select('.returnRate').text())
+    var price = d3.select(this).select('.price').text()
+    var div_rate = d3.select(this).select('.divRate').text()
+    var tkr_symb = d3.select(this).select('.tkrSymbol').text()
+    var roi = d3.select(this).select('.returnRate').text()
+    console.log(`div_rate: ${div_rate}`)
 
-    // call function to subtract (input value * price) from remaining_amount
-    
-    // call function to calculate the revenue for barchart (qty * divrate)
-        // push calculations to arrays for barchart axis
-        // X_tkrsymb.push(tkr_symb)
-        // console.log(`Ticker symbol: ${tkr_symb}`)
-        // Y_divtimesqty.push(revenue)
-        // console.log(Y_divtimesqty)
-
-    // // Call Filter Table function to filter table based on new remaining amount
-    // // filterTable(data, remaining_amount)
-
-    // // Call Gauge function to move gauge down according to new remaining amount
-    // // Call barchart function to add the x & y values according to new lists
-    // barChart(X_tkrsymb, Y_divtimesqty)
-    
+    // push calculations to arrays for barchart axis
+    X_tkrsymb.push(tkr_symb)
+    // call function to calculate the revenue for barchart
+    Revenue(stockQty,div_rate)
+    // Call barchart function to add the x & y values according to new lists
+    barChart(Y_revenue,X_tkrsymb)
+    console.log(X_tkrsymb)
+    console.log(Y_revenue)
+    // call function to subtract (stockQty * price) from remaining_amount
+    remaining_amount = adjustRemaining_Amount(stockQty,price,remaining_amount)
+    // Call Filter Table function to filter table based on new remaining amount
+    filterTable(stockdata, remaining_amount)
+    // Call Gauge function to move gauge down according to new remaining amount
+    gauge(remaining_amount, spend_amount)
 }
+
+}) // end .then function
+
+
 
 
 

@@ -1,5 +1,4 @@
 # import dependancies
-import numpy as np
 import sqlalchemy
 import json
 import pandas as pd
