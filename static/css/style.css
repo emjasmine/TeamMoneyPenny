@@ -24,7 +24,8 @@
     
   .dark-mode {
     background-color: black;
-    color: white;
+    color:lightgrey;
+    
   }
 /* The wrapper contains all of the page's content besides the footer, which is pushed to the bottom of the page */
 .wrapper {
@@ -71,12 +72,17 @@
     font-size: xx-small;
   }
 
+  .btn-light{
+    font-size: xx-small;
+    padding: 0px;
+  }
+
   /* This CSS styles the bond icon in the navbar */
 .nav-bond {
     position: absolute;
-    bottom: 5px;
+    bottom: 10px;
     left: 10px;
-    width: 65px;
+    width: 90px;
   }
 /* Style for the Calculator Button */
 .btn-main{
@@ -84,7 +90,7 @@
 }
 
 .btn-main a{
-    color: black;
+    color: white;
 }
 
 /* Style for the animation scroll line */
@@ -127,8 +133,6 @@
 }
 
 
-
-
 /* The styles for the MoneyPenny gif */
 .mp {
     position: relative;
@@ -151,12 +155,12 @@
   .sh-text {
     margin-top: 0%;
     text-align: center;
-    color: #e2ba05;
+    color: #005FDE;
   }
   
   .sh-text1{
     text-align: center;
-    color: #e2ba05;
+    color: #aa16cf;
   }
 
 /* Styles text for summary*/
@@ -171,7 +175,7 @@
     margin-right: 40px;
     color: #f5f5f1;
   }
-
+ 
   /* style for the creators section */
   .creators {
     margin-top: 10%;
@@ -198,21 +202,23 @@
 
     .buttons{
         padding: 20px;
+        font-size: medium;
     }
 
     .get-button{
-        background-color: #2355a7;
+        background-color: #aa16cf;
         color: white;
     }
 
     .reset-button{
-        background-color: #2355a7;
+        background-color: #aa16cf;
         color: white;
     }
 
     .input-area{
-      margin-top: 50px;
+      margin-top: 100px;
     }
+
 
 /* Formating for exploding text */
 /* .explode-text{

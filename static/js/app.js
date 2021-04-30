@@ -118,8 +118,8 @@ function barChart(x,y)
       }];
       
       var layout = {
-        height: 800,
-        width: 900
+        height: 600,
+        width: 500
       };
 
 //Add chart to empty div
