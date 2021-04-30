@@ -39,8 +39,21 @@
                 <a class="navbar-brand" href="index.html">
                     <img class="nav-bond" src="https://img.icons8.com/nolan/64/james-bond.png" href="index.html"/>
                 </a>
-                <!-- Button links to the calculator page -->
-                <button type="button" id="calculator" class="btn-main" href="calculator.html">Calculator</button>
+                <div class="buttons-area">
+                    <div class="row">
+                        <div style="padding: 5px;">
+                            <!-- Button links to the calculator page -->
+                            <button type="button" id="calculator" class="btn-main">
+                            <a href="calculator.html">Calculator</a> 
+                        </div>
+                        <div style="padding: 5px;" class="toggle-button">
+                            <!-- Button to toggle dark/light mode -->
+                            <button type="button" id="dark-mode" class="btn btn-light" onclick="myFunction()">
+                            <a >Toggle Dark Mode</a> 
+                        </div> 
+                    </div>
+                    
+                </div>
             </div>
         </nav>
 
@@ -119,6 +132,12 @@
     <!-- <script src="app.js"></script> -->
     <script src="../static/data/openClose.json"></script>
     <script src="../static/js/app.js"></script>
+    <script>
+        function myFunction() {
+          var element = document.body;
+          element.classList.toggle("dark-mode");
+       }
+       </script>
     
 </body>
 </html>

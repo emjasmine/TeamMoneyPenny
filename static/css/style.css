@@ -6,8 +6,10 @@
   html,
   body {
     height: 100%;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    background-color: white;
+    color: black;
   }
 
   h2{
@@ -18,6 +20,11 @@
 
   p{
     font-size: medium;
+  }
+    
+  .dark-mode {
+    background-color: black;
+    color: white;
   }
 /* The wrapper contains all of the page's content besides the footer, which is pushed to the bottom of the page */
 .wrapper {
@@ -53,10 +60,15 @@
     padding: 5px;
     background: #1b3146;
   } */
-
+/* styling for the nav bar */
   .navbar {
     padding: 20px;
     margin: 0;
+  }
+
+  /* styling for the toggle button */
+  .toggle-button{
+    font-size: xx-small;
   }
 
   /* This CSS styles the bond icon in the navbar */
