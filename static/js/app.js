@@ -156,9 +156,17 @@ function pieChart(x,y,colors)
         hole: .3,
         type: 'pie',
       }];
+<<<<<<< HEAD
     var layout = darkModeStyles(title)
 
     var config = {responsive: true}
+=======
+      
+      var layout = {
+        height: 600,
+        width: 500
+      };
+>>>>>>> 5b957909b57d61e2b1faac6138993fa7a6b7aa02
 
 //Add chart to empty div
 Plotly.newPlot('pie-chart', data, layout, config);

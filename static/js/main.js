@@ -40,9 +40,3 @@ $(document).ready(function() {
    
 });
 
-//json path
-const path = "../static/data/openClose.json"
-
-d3.json(path).then(stockdata => {
-  console.log(stockdata[0])
-})
