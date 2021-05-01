@@ -14,6 +14,8 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <!--D3-->
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <!--jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         /* Chrome, Safari, Edge, Opera */
         input::-webkit-outer-spin-button,
@@ -99,7 +101,7 @@
                 </div>
             <!-- horizontal bar chart -->
                 
-                <div id="bar-chart" class="col-md-5">
+                <div id="pie-chart" class="col-md-5">
 
                 </div>
             </div>
@@ -135,7 +137,10 @@
     <script>
         function myFunction() {
           var element = document.body;
-          element.classList.toggle("dark-mode");
+        //   element.classList.toggle("dark-mode");
+          $('body').toggleClass('dark-mode');
+          $('.charts').toggleClass('dark-mode');
+          $('table').toggleClass('table-dark');
        }
        </script>
     

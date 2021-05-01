@@ -1,18 +1,16 @@
 /****************************************************************
             Declare variables for use in functions
 ****************************************************************/
-// for barchart
+// for pieChart
 var X_tkrsymb = [ ];
 var Y_revenue = [ ];
+var colorscale = [];
 
 // set all variables to zero for empty gauge
 var dollar_min = 0;
 var remaining_amount = 0;
 // plotly requires arbitrary amount for range to crete an empty gauge
 var spend_amount = 50;
-
-// colors list rgb [ [low], [med], [high] ]
-var colors = [[45, 160, 227], [152, 74, 255], [251, 43, 255]]
 
 // Identify user amount input field
 var dollars_input = d3.select('#spend-amount');
@@ -55,7 +53,7 @@ reset_button.on('click', getStocks_event)
 console.log(stockdata[0]);
 //Create ALL stocks table
 allStocksTable(stockdata) 
-barChart(X_tkrsymb, Y_revenue)
+pieChart(X_tkrsymb, Y_revenue)
 gauge(remaining_amount, spend_amount, dollar_min)
 
 /****************************************************************
@@ -91,7 +89,6 @@ function allStocksTable(anyData)
         row.append("td").text(`${ROI(price, divAmount)}`);
     });
 }
-
 /************************* calculate rate of return for table *************************/
 function ROI(price, divAmount) 
 {
@@ -107,52 +104,97 @@ function ROI(price, divAmount)
     // console.log([divAmount, price, roi])
     return roi
 }
-
-/************************* Bar Chart *************************/
-function barChart(x,y) 
+/************************* if dark mode syle changes *************************/
+function darkModeStyles(title, h, w) 
 {
+    var layout = 
+    {
+        title: title,
+        width: 600, 
+        height: 500,
+        paper_bgcolor: "rgba(0,0,0,.3)",      
+        font: 
+        {
+            size: 18,
+            color: 'white',
+        },
+    }
+
+    return layout
+}
+/************************* dynamic color generator *************************/
+function colorGenerator()
+{
+    var random = Math.random();
+    var red = Math.floor(Math.random() * (255 - 0 + 1)) + 0;
+    var green = Math.floor(Math.random() * (132 - 99 + 1) ) + 99;
+    var blue = 255
+    var color = `rgb(${red},${green},${blue})`
+    colorscale.push(color)
+    console.log(color)
+    return color
+}
+/************************* Pie Chart *************************/
+function pieChart(x,y,colors) 
+{
+    var title = "My Portfolio"
     var data = [{
         values: x,
         labels: y,
-        type: 'pie'
+        pull: .1,
+        marker: 
+        {
+            colors: colors,
+            line: 
+            {
+                color: 'white',
+                width: 1.5,
+            }
+        },
+        textinfo: "label",
+        hoverinfo: 'percent',
+        hole: .3,
+        type: 'pie',
       }];
-      
-      var layout = {
-        height: 800,
-        width: 900
-      };
+    var layout = darkModeStyles(title)
+
+    var config = {responsive: true}
 
 //Add chart to empty div
-Plotly.newPlot('bar-chart', data, layout);
+Plotly.newPlot('pie-chart', data, layout, config);
 }
-
 /************************* Gauge *************************/
 function gauge(remaining_amount, spend_amount)
 {
     console.log(`GuageFunc Triggered. RemainaingAmt: ${remaining_amount}`)
+    var low = spend_amount/ 3
+    var mid = spend_amount - low
+
     // console.log(`Spend Amount ${spend_amount}`)
+    var title = "Remaining Amount ($)"
     var data = 
     [{
         value: remaining_amount,
         number: { prefix: "$", valueformat: '.' + 2 + 'f'},
-        title: { text: "Remaining Amount ($)" },
         type: "indicator",
         mode: "gauge+number", 
         delta: { reference: spend_amount },
         gauge: 
         { 
-            axis: { range: [0, spend_amount] } 
+            axis: { range: [0, spend_amount] }, 
+            bar:{color:'#5e5f82'},
+            steps: [
+                { range: [0, low], color: "#cc3502" },
+                { range: [low, mid], color: "#ebe015" },
+                { range: [mid, spend_amount], color: "green" }
+              ],
         }
     }];
-    var layout = 
-    {
-        width: 400, 
-        height: 300, 
-    };
+    var config = {responsive: true}
+    var layout = darkModeStyles(title)
     //Add gauge to empty div
     Plotly.newPlot('gauge', data, layout);
 }
-
 /************************* getStocks_event *************************/
 function getStocks_event()
 {
@@ -162,9 +204,11 @@ function getStocks_event()
     // Call gauge function
     gauge(remaining_amount, spend_amount, dollar_min);
     console.log(`get stocks event triggered remaining amount:${remaining_amount}`)
-    barChart([0], [0])
+    colorscale.length = 0;
+    X_tkrsymb.length = 0;
+    Y_revenue.length = 0;
+    pieChart(Y_revenue,X_tkrsymb,colorscale)
 }
-
 /************************* use remaining amount to filter Data *************************/
 function filteredData(anyData, anyAmount) 
 {
@@ -177,7 +221,6 @@ filtered_data = filtered_data.filter(stock => stock.close <= anyAmount)
 
 return filtered_data
 }
-
 /************************* build the table with filteredData *************************/
 function filterTable(anyData) 
 {
@@ -227,7 +270,6 @@ function filterTable(anyData)
     // user enters a qty on ticker row
     d3.selectAll('.tkr_row').on('change', qtyInput_event)
 }
-
 /************************* Set input field always has 2 decimals *************************/
 function dollarsNotInt(event) 
 {
@@ -241,7 +283,6 @@ function dollarsNotInt(event)
       document.getElementById('spend-amount').value = value.toFixed(2);
     }           
 }
-
 /*************************** turn spend_amount into remaining_amount ***************************************/
 function spend_amount2remaining_amount()
 {
@@ -263,7 +304,6 @@ function spend_amount2remaining_amount()
     }
     return [remaining_amount, spend_amount];
 }
-
 /************************* qty * price - remainaing amount *************************/
 function adjustRemaining_Amount(stockQty,price) 
 {
@@ -272,11 +312,10 @@ function adjustRemaining_Amount(stockQty,price)
     console.log(`New remaining_amount: ${remaining_amount}`)
     return remaining_amount
 }
-
 /************************* qtyInput_event *************************/
 function Revenue(stockQty,div_rate)
 {
-    //calculate the revenue for barchart
+    //calculate the revenue for pieChart
     var revenue = parseFloat(stockQty) * parseFloat(div_rate)
     Y_revenue.push(revenue)
     console.log(`Revenue stockQty: ${stockQty}`)
@@ -297,14 +336,15 @@ function qtyInput_event(remaining_amount)
     var tkr_symb = d3.select(this).select('.tkrSymbol').text()
     var roi = d3.select(this).select('.returnRate').text()
     console.log(`div_rate: ${div_rate}`)
-
-    // push calculations to arrays for barchart axis
+    //create a color for this item
+    colorGenerator()
+    // push calculations to arrays for pieChart axis
     X_tkrsymb.push(tkr_symb)
-    // call function to calculate the revenue for barchart
+    // call function to calculate the revenue for pieChart
     Revenue(stockQty,div_rate)
-    // Call barchart function to add the x & y values according to new lists
-    barChart(Y_revenue,X_tkrsymb)
-    console.log(X_tkrsymb)
+    // Call pieChart function to add the x & y values according to new lists
+    pieChart(Y_revenue,X_tkrsymb,colorscale)
+    console.log(colorscale)
     console.log(Y_revenue)
     // call function to subtract (stockQty * price) from remaining_amount
     remaining_amount = adjustRemaining_Amount(stockQty,price,remaining_amount)
