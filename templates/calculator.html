@@ -35,7 +35,7 @@
 
     <div class="wrapper">
         <!-- Navigation Bar -->
-        <nav class="navbar fixed-top navbar-dark" style="background-color:black;">
+        <nav class="navbar navbar-dark" style="background-color:black;">
             <div class="container-fluid">
                 <!-- Icon image links back to main page -->
                 <a class="navbar-brand" href="index.html">
@@ -46,15 +46,12 @@
                         <div style="padding: 5px;">
                             <!-- Button links to the calculator page -->
                             <button type="button" id="calculator" class="btn-main">
-                                <a href="calculator.html">Calculator</a>
-                            </button>
-                            <!-- <a href="calculator.html">Calculator</a>  -->
+                            <a href="calculator.html">Calculator</a> 
                         </div>
                         <div style="padding: 5px;" class="toggle-button">
                             <!-- Button to toggle dark/light mode -->
                             <button type="button" id="dark-mode" class="btn btn-light" onclick="myFunction()">
-                                <a >Toggle Dark Mode</a> 
-                            </button>
+                            <a >Toggle Dark Mode</a> 
                         </div> 
                     </div>
                     
@@ -75,7 +72,7 @@
                         </div>
                     </div>
                      <!-- Div for guage -->
-                    <div class="col-md-6" id="gauge" style="padding: 10px;">
+                    <div class="col-md-6" id="gauge">
                     </div>
                 </div>
             </div>
@@ -86,7 +83,7 @@
             <div class="row">
                  <!-- stock table -->
                 <div class="col-md-7">
-                    <table class="stock-table table table-striped table-hover" >
+                    <table class="stock-table table table-striped table-hover">
                         <thead class="stock-table-head">
                             <tr>
                                 <th>Qty</th>
@@ -104,11 +101,7 @@
                 </div>
             <!-- horizontal bar chart -->
                 
-<<<<<<< HEAD
                 <div id="pie-chart" class="col-md-5">
-=======
-                <div id="bar-chart" class="col-md-5" style="padding: 5px;">
->>>>>>> 5b957909b57d61e2b1faac6138993fa7a6b7aa02
 
                 </div>
             </div>
@@ -142,13 +135,14 @@
     <script src="../static/data/openClose.json"></script>
     <script src="../static/js/app.js"></script>
     <script>
-        function myFunction() {
+        function myFunction() 
+        {
           var element = document.body;
         //   element.classList.toggle("dark-mode");
           $('body').toggleClass('dark-mode');
           $('.charts').toggleClass('dark-mode');
           $('table').toggleClass('table-dark');
-       }
+        }
        </script>
     
 </body>
