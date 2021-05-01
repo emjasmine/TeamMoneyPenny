@@ -136,8 +136,8 @@
 /* The styles for the MoneyPenny gif */
 .mp {
     position: relative;
-    height: 850px;
-    padding: 10px; 
+    height: 30%;
+    padding: 10%; 
     margin: 0%;
     background: black url("../images/money_penny.gif");
     background-attachment: fixed;
